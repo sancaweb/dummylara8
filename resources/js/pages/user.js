@@ -1,6 +1,6 @@
 const { get } = require("jquery");
 
-jQuery(document).ready(function ($) {
+$(function () {
     $.ajaxSetup({
         headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"').attr("content")
@@ -40,6 +40,40 @@ jQuery(document).ready(function ($) {
                 dataFilter.columnsFilter = columnsFilter;
                 dataFilter.filterVal = filterVal;
                 dataFilter.jenis_data = jenis_data;
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.responseJSON.data) {
+                    var error = jqXHR.responseJSON.data.error;
+                    Swal.fire({
+                        icon: "error",
+                        title: " <br>Copy error dan hubungi Programmer!",
+                        html: '<div class="alert alert-danger text-left" role="alert">' +
+                            '<p>Error Message: <strong>' + error + '</strong></p>' +
+                            '</div>',
+                        allowOutsideClick: false,
+                        showConfirmButton: true,
+                    }).then(function () {
+                        refreshTable();
+                    });
+                } else {
+                    var message = jqXHR.responseJSON.message;
+                    var errorLine = jqXHR.responseJSON.line;
+                    var file = jqXHR.responseJSON.file;
+                    Swal.fire({
+                        icon: "error",
+                        title: " <br>Copy error dan hubungi Programmer!",
+                        html: '<div class="alert alert-danger text-left" role="alert">' +
+                            '<p>Error Message: <strong>' + message + '</strong></p>' +
+                            '<p>File: ' + file + '</p>' +
+                            '<p>Line: ' + errorLine + '</p>' +
+                            '</div>',
+                        allowOutsideClick: false,
+                        showConfirmButton: true,
+                    }).then(function () {
+                        refreshTable();
+                    });
+                }
+
             }
         },
 
@@ -49,9 +83,9 @@ jQuery(document).ready(function ($) {
             targets: [0, 1, -1]
         }]
     });
-    $("#table-user_filter input").unbind();
-    $("#table-user_filter input").bind("keyup", function (e) {
-        if (e.keyCode == 13) {
+    $("#table-user_filter input").off();
+    $("#table-user_filter input").on("keyup", function (e) {
+        if (e.code == "Enter") {
             tableUser.search(this.value).draw();
         }
     });

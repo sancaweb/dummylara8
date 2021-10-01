@@ -1,6 +1,6 @@
 const { get } = require("jquery");
 
-jQuery(document).ready(function ($) {
+$(function () {
 
     $.ajaxSetup({
         headers: {
@@ -302,6 +302,40 @@ jQuery(document).ready(function ($) {
             url: base_url + "/permission/datatable",
             dataType: "json",
             type: "POST",
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.responseJSON.data) {
+                    var error = jqXHR.responseJSON.data.error;
+                    Swal.fire({
+                        icon: "error",
+                        title: " <br>Copy error dan hubungi Programmer!",
+                        html: '<div class="alert alert-danger text-left" role="alert">' +
+                            '<p>Error Message: <strong>' + error + '</strong></p>' +
+                            '</div>',
+                        allowOutsideClick: false,
+                        showConfirmButton: true,
+                    }).then(function () {
+                        refreshTable();
+                    });
+                } else {
+                    var message = jqXHR.responseJSON.message;
+                    var errorLine = jqXHR.responseJSON.line;
+                    var file = jqXHR.responseJSON.file;
+                    Swal.fire({
+                        icon: "error",
+                        title: " <br>Copy error dan hubungi Programmer!",
+                        html: '<div class="alert alert-danger text-left" role="alert">' +
+                            '<p>Error Message: <strong>' + message + '</strong></p>' +
+                            '<p>File: ' + file + '</p>' +
+                            '<p>Line: ' + errorLine + '</p>' +
+                            '</div>',
+                        allowOutsideClick: false,
+                        showConfirmButton: true,
+                    }).then(function () {
+                        refreshTable();
+                    });
+                }
+
+            }
         },
 
         columns: columnsTablePermissions,
@@ -310,9 +344,9 @@ jQuery(document).ready(function ($) {
             targets: [0, -1]
         }]
     });
-    $("#table-permissions_filter input").unbind();
-    $("#table-permissions_filter input").bind("keyup", function (e) {
-        if (e.keyCode == 13) {
+    $("#table-permissions_filter input").off();
+    $("#table-permissions_filter input").on("keyup", function (e) {
+        if (e.code == "Enter") {
             tablePermissions.search(this.value).draw();
         }
     });
