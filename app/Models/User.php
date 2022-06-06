@@ -54,8 +54,6 @@ class User extends Authenticatable
 
     public function takeImage()
     {
-
-
         if ($this->foto === null) {
             return asset("images/no-image.png");
         } else {
