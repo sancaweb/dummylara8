@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,10 @@ Route::group(['middleware' => ['auth']], function () {
 
 Auth::routes();
 
+Route::group(['prefix' => 'filemanager', 'middleware' => ['web', 'auth', 'permission:post create']], function () {
+    \UniSharp\LaravelFilemanager\Lfm::routes();
+});
+
 /**
  * PROFILE
  */
@@ -45,28 +50,40 @@ Route::middleware(['auth'])->group(function () {
 
 
 /** USER ROUTE */
-Route::group(['middleware' => ['permission:user read']], function () {
+Route::group(['middleware' => ['auth', 'permission:user read']], function () {
     Route::get('/user', [UserController::class, 'index'])->name('user');
     Route::post('/user/datatable', [UserController::class, 'datatable'])->name('user.datatable');
 });
 
-Route::post('/user', [UserController::class, 'store'])->name('user.store')->middleware(['permission:user create']);
+Route::post('/user', [UserController::class, 'store'])->name('user.store')->middleware(['auth', 'permission:user create']);
 
-Route::group(['middleware' => ['permission:user update']], function () {
+Route::group(['middleware' => ['auth', 'permission:user update']], function () {
     Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::patch('/user/{id}/update', [UserController::class, 'update'])->name('user.update');
 });
 
-Route::delete('user/{id}/delete', [UserController::class, 'delete'])->name('user.delete')->middleware(['permission:user delete']);
+Route::delete('user/{id}/delete', [UserController::class, 'delete'])->name('user.delete')->middleware(['auth', 'permission:user delete']);
+
 
 /**
  * ./END USER ROUTE
  */
 
+/**
+ * ADMIN
+ */
+
+Route::group(['middleware' => ['auth', 'permission:post read']], function () {
+    Route::get('/post', [PostController::class, 'index'])->name('post');
+    Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
+    Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
+    Route::post('/post/datatable', [PostController::class, 'datatable']);
+});
 
 
 
-Route::group(['middleware' => ['role:super admin']], function () {
+
+Route::group(['middleware' => ['auth', 'role:super admin']], function () {
 
     //trash
     Route::get('/user/trash', [UserController::class, 'trash'])->name('user.trash');

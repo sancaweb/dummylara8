@@ -36,7 +36,11 @@ class UserSeeder extends Seeder
             'activity create', 'activity read', 'activity update', 'activity delete',
             'role create', 'role read', 'role update', 'role delete',
             'permission create', 'permission read', 'permission update', 'permission delete',
-            'assign sync', 'profile read', 'profile update'
+            'assign sync', 'profile read', 'profile update',
+
+            //posts
+            'post create', 'post read', 'post update', 'post delete',
+            'post trash', 'post restore', 'post destroy'
 
         ];
 
@@ -85,13 +89,19 @@ class UserSeeder extends Seeder
         $roleAdmin = Role::find(2);
 
         $roleAdmin->syncPermissions([
-            'user create', 'user read', 'user update'
+            'user create', 'user read', 'user update',
+
+            'post create', 'post read', 'post update', 'post delete',
+            'post trash', 'post restore', 'post destroy'
+
         ]);
 
         $roleUser = Role::find(3);
 
         $roleUser->syncPermissions([
-            'profile update', 'profile read'
+            'profile update', 'profile read',
+            //post
+            'post create', 'post read', 'post update', 'post delete',
         ]);
 
 
