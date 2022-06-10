@@ -5,6 +5,7 @@ namespace App\Models\Post;
 use App\Traits\WhosTrait;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,16 +19,16 @@ class Post extends Model
     protected $primaryKey = 'id_post';
     protected $fillable = [
         'title', 'slug', 'content', 'category_id', 'status',
-        'published_date', 'created_by', 'updated_by'
+        'published_date', 'featured_image', 'thumb', 'created_by', 'updated_by'
     ];
 
     //Anonymous Global Scope
-    protected static function booted()
-    {
-        static::addGlobalScope('statusPost', function (Builder $builder) {
-            $builder->where('status', '=', 'published');
-        });
-    }
+    // protected static function booted()
+    // {
+    //     static::addGlobalScope('statusPost', function (Builder $builder) {
+    //         $builder->where('status', '=', 'published');
+    //     });
+    // }
 
     public function sluggable(): array
     {
@@ -40,7 +41,7 @@ class Post extends Model
 
     public function encryptedId()
     {
-        return Crypt::encryptString($this->id_piutang);
+        return Crypt::encryptString($this->id_post);
     }
 
     public function category()
@@ -51,6 +52,36 @@ class Post extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'post_tag', 'post_id', 'tag_id');
+    }
+
+    public function takeImage()
+    {
+        if ($this->featured_image === null) {
+            return asset("images/no-image.png");
+        } else {
+            $exist = Storage::exists($this->featured_image);
+
+            if ($exist) {
+                return asset("storage/" . $this->featured_image);
+            } else {
+                return asset("images/no-image.png");
+            }
+        }
+    }
+
+    public function takeThumb()
+    {
+        if ($this->thumb === null) {
+            return asset("images/no-image.png");
+        } else {
+            $exist = Storage::exists($this->thumb);
+
+            if ($exist) {
+                return asset("storage/" . $this->thumb);
+            } else {
+                return asset("images/no-image.png");
+            }
+        }
     }
 
     /**

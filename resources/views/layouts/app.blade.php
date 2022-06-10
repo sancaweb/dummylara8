@@ -191,9 +191,17 @@
         <script src="{{ asset('js/pages/profile.js') }}"></script>
     @endif
     @if ($page == 'post')
+        <script src="{{ asset('vendor/laravel-filemanager/js/stand-alone-button.js') }}"></script>
         <script src="{{ asset('js/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
 
-        <script src="{{ asset('js/pages/post.js?v=1.2') }}"></script>
+        <script src="{{ asset('js/pages/post.js?v=1.1') }}"></script>
+    @endif
+
+    @if ($page == 'editPost')
+        <script src="{{ asset('vendor/laravel-filemanager/js/stand-alone-button.js') }}"></script>
+        <script src="{{ asset('js/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
+
+        <script src="{{ asset('js/pages/editPost.js?v=1.1') }}"></script>
     @endif
 
     @if ($page == 'dashboard')

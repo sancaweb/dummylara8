@@ -2,14 +2,23 @@
 @section('content')
     <section class="content mt-4">
         <div class="container-fluid">
+            @if (Session::has('messageAlert'))
+                <div class="alert alert-{{ Session::get('alertClass') }} alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5><i class="fas fa-exclamation-triangle"></i> PERHATIAN!</h5>
+                    <strong>{{ Session::get('messageAlert') }}</strong>
 
+                </div>
+            @endif
 
             <div class="row">
 
                 <div class="col-12">
                     <div class="card card-outline card-success">
                         <div class="card-header">
-                            <h3 class="card-title">Data Post</h3>
+                            <h3 class="card-title">{{ $pageTitle }}</h3>
                             <div class="card-tools">
                                 <a href="{{ route('post.create') }}" class="btn btn-sm btn-flat btn-primary openForm">
                                     <i class="fas fa-plus"></i> Tambah Post
@@ -36,6 +45,7 @@
                                         <th>Kategori</th>
                                         <th>Tags</th>
                                         <th>Published Date</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>

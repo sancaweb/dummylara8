@@ -62,7 +62,7 @@ class User extends Authenticatable
             if ($exist) {
                 return asset("storage/" . $this->foto);
             } else {
-                return asset("images/no-imageku.png");
+                return asset("images/no-image.png");
             }
         }
     }

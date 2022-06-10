@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\Ajax\PostAjax;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\ProfileController;
@@ -26,6 +27,14 @@ Route::get('/test', [TestingController::class, 'index'])->name('testing');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/', [DashboardController::class, 'index'])->name('root');
+
+    /**
+     * ALL AJAX CONTROLLERS
+     */
+    //post
+    Route::get('/ajax/post/tags', [PostAjax::class, 'getTags']);
+    Route::get('/ajax/post/{encryptedPost}/select2tagbypost', [PostAjax::class, 'select2GetTagByPost']);
+    Route::patch('/ajax/post/status', [PostAjax::class, 'changeStatus']);
 });
 
 
@@ -77,6 +86,11 @@ Route::group(['middleware' => ['auth', 'permission:post read']], function () {
     Route::get('/post', [PostController::class, 'index'])->name('post');
     Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
     Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
+    Route::get('/post/{id_post}/edit', [PostController::class, 'edit'])->name('post.edit');
+    Route::patch('/post/{id_post}/update', [PostController::class, 'update'])->name('post.update');
+    Route::delete('/post/{id_post}/delete', [PostController::class, 'delete'])->name('post.delete');
+
+
     Route::post('/post/datatable', [PostController::class, 'datatable']);
 });
 

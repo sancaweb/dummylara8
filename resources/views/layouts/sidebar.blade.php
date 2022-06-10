@@ -36,7 +36,7 @@
 
                 @can('post read')
                     <li
-                        class="nav-item {{ $page == 'post' || $page == 'postCats' || $page == 'postTags' ? 'menu-is-opening menu-open' : '' }}">
+                        class="nav-item {{ $page == 'post' || $page == 'editPost' || $page == 'postCats' || $page == 'postTags' ? 'menu-is-opening menu-open' : '' }}">
                         <a href="#" class="nav-link">
                             <i class="fas fa-newspaper nav-icon"></i>
                             <p>
@@ -45,9 +45,10 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview"
-                            {{ $page == 'post' || $page == 'postCats' || $page == 'postTags' ? 'style="display:block;"' : 'style="display:none;"' }}>
+                            {{ $page == 'post' || $page == 'editPost' || $page == 'postCats' || $page == 'postTags' ? 'style="display:block;"' : 'style="display:none;"' }}>
                             <li class="nav-item">
-                                <a href="{{ route('post') }}" class="nav-link {{ $page == 'post' ? 'active' : '' }}">
+                                <a href="{{ route('post') }}"
+                                    class="nav-link {{ $page == 'post' || $page == 'editPost' ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Posts</p>
                                 </a>

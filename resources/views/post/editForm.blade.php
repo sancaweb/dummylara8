@@ -4,16 +4,19 @@
         <div class="container-fluid">
 
 
-            <form id="formPost" action="{{ route('post.store') }}" method="post">
+            <form id="formPost" action="{{ route('post.update', $dataPost['id_post']) }}" method="post">
                 <div class="row">
                     @csrf
+                    <input type="hidden" name="_method" value="patch">
+                    <input type="hidden" id="id_post" value="{{ $dataPost['id_post'] }}" readonly>
                     <div class="col-8">
                         <div class="card card-outline card-success">
                             <div class="card-header">
                                 <h3 class="card-title">{{ $pageTitle }}</h3>
                                 <div class="card-tools">
 
-                                    <a href="{{ route('post.create') }}" class="btn btn-sm btn-flat btn-success">
+                                    <a href="{{ route('post.edit', $dataPost['id_post']) }}"
+                                        class="btn btn-sm btn-flat btn-success">
                                         <i class="fas fa-sync"></i> &nbsp; Reset Form
                                     </a>
 
@@ -24,14 +27,16 @@
 
                                 <div class="form-group">
                                     <label for="title">Title</label>
-                                    <input id="title" type="text" class="form-control" placeholder="Judul Post"
-                                        name="title" required>
+                                    <input id="title" value="{{ $dataPost['title'] }}" type="text" class="form-control"
+                                        placeholder="Judul Post" name="title" required>
                                 </div>
                                 <!-- /.form-group -->
 
                                 <div class="form-group">
                                     <label for="content">Content</label>
-                                    <textarea class="form-control" name="content" id="content" cols="30" rows="10"></textarea>
+                                    <textarea class="form-control" name="content" id="content" cols="30" rows="10">
+                                        {{ $dataPost['content'] }}
+                                    </textarea>
                                 </div>
                                 <!-- /.form-group -->
 
@@ -53,9 +58,9 @@
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <div class="form-group">
-                                    <a id="linkFoto" href="{{ asset('images/no-image.png') }}" data-lightbox="image-foto"
+                                    <a id="linkFoto" href="{{ $dataPost['featured_image'] }}" data-lightbox="image-foto"
                                         data-title="featured Foto">
-                                        <img id="imageReview" src="{{ asset('images/no-image.png') }}" alt="Image Foto"
+                                        <img id="imageReview" src="{{ $dataPost['featured_image'] }}" alt="Image Foto"
                                             style="width: 150px;height: 150px;" class="img-thumbnail img-fluid">
                                     </a>
                                 </div>
@@ -66,15 +71,15 @@
                                     <div class="input-group">
                                         <span class="input-group-btn">
                                             <a id="inputFoto" data-input="inputPath" data-preview="imageReview"
-                                                data-linkfoto="linkFoto" data-thumb="thumbImage" class="btn btn-primary">
+                                                data-linkfoto="linkFoto" class="btn btn-primary">
                                                 <i class="fa fa-picture-o"></i> Choose Image
                                             </a>
                                         </span>
-                                        <input id="inputPath" class="form-control" type="text" name="featured_image"
-                                            readonly>
+                                        <input value="{{ $dataPost['featured_image'] }}" id="inputPath"
+                                            class="form-control" type="text" name="featured_image" readonly>
                                     </div>
-                                    <input id="thumbImage" class="form-control" type="hidden" name="thumb" readonly>
-
+                                    <input value="{{ $dataPost['thumb'] }}" id="thumbImage" class="form-control"
+                                        type="hidden" name="thumb" readonly>
                                 </div>
 
                                 <div class="form-group">
@@ -82,7 +87,13 @@
                                     <select class="form-control select2" name="category_id" id="categories">
                                         <option value=""></option>
                                         @foreach ($categories as $cat)
-                                            <option value="{{ $cat->id_category }}">{{ ucwords($cat->name) }}</option>
+                                            @if ($cat->id_category == $dataPost['category_id'])
+                                                <option value="{{ $cat->id_category }}" selected>
+                                                    {{ ucwords($cat->name) }}</option>
+                                            @else
+                                                <option value="{{ $cat->id_category }}">{{ ucwords($cat->name) }}
+                                                </option>
+                                            @endif
                                         @endforeach
 
 
@@ -103,10 +114,11 @@
                                 <!-- /.form-group -->
 
                                 <div class="form-group">
-                                    <label for="published_date">Published Date</label>
+                                    <label for="published_date">Published Date </label>
                                     <div class="input-group" id="published_date" data-target-input="nearest">
                                         <input id="inputPublishedDate" type="text" class="form-control datetimepicker-input"
-                                            value="" data-target="#published_date" name="published_date" required>
+                                            value="{{ $dataPost['published_date'] }}" data-target="#published_date"
+                                            name="published_date" required>
 
                                         <div class="input-group-append" data-target="#published_date"
                                             data-toggle="datetimepicker">
@@ -118,9 +130,15 @@
 
                                 <div class="form-group">
                                     <label for="status">Status</label>
-                                    <select name="status" id="status" class="form-group">
-                                        <option value="published">Published</option>
-                                        <option value="draft">Draft</option>
+                                    <select name="status" id="status" class="form-control">
+                                        @if ($dataPost['status'] == 'draft')
+                                            <option value="published">Published</option>
+                                            <option value="draft" selected>Draft</option>
+                                        @else
+                                            <option value="published" selected>Published</option>
+                                            <option value="draft">Draft</option>
+                                        @endif
+
                                     </select>
                                 </div>
                                 <!-- /.form-group -->

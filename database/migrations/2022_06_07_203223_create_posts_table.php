@@ -19,7 +19,9 @@ class CreatePostsTable extends Migration
             $table->string('slug');
             $table->longText('content');
             $table->unsignedInteger('category_id');
-            $table->string('status'); // published,draft
+            $table->string('status')->default('published'); // published,draft
+            $table->string('featured_image')->nullable();
+            $table->string('thumb')->nullable();
 
             $table->dateTime('published_date');
             $table->unsignedInteger('created_by');

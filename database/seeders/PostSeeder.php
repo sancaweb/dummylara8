@@ -2,12 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\Post\Category;
 use Carbon\Carbon;
-use App\Models\Post\Post;
 use App\Models\Post\Tag;
+use App\Models\Post\Post;
 use Faker\Factory as faker;
+use App\Models\Post\Category;
 use Illuminate\Database\Seeder;
+use Cviebrock\EloquentSluggable\Services\SlugService;
 
 
 class PostSeeder extends Seeder
@@ -21,6 +22,9 @@ class PostSeeder extends Seeder
     {
         $faker = faker::create('id_ID');
 
+        $faker = faker::create('id_ID');
+
+
         $categories = [
             'pertandingan', 'kompetisi', 'pemain', 'club'
         ];
@@ -31,7 +35,8 @@ class PostSeeder extends Seeder
         }
 
         $tags = [
-            'berita bola', 'berita kompetisi', 'kabar pemain', 'kabar club'
+            'berita bola', 'berita kompetisi', 'kabar pemain', 'kabar club', 'berita umum',
+            'berita pssi'
         ];
 
         foreach ($tags as $tag) {
@@ -40,11 +45,26 @@ class PostSeeder extends Seeder
             ]);
         }
 
+        // $dataTags = [];
+        // for ($t = 0; $t < 5000; $t++) {
+        //     $name = $faker->sentence(rand(1, 3));
+        //     $slug = SlugService::createSlug(Tag::class, 'slug', $name);
+
+        //     $dataTags[] = [
+        //         'name' => rtrim($name, '.'),
+        //         'slug' => $slug,
+        //         'created_at' => date('Y-m-d H:i:s'),
+        //         'updated_at' => date('Y-m-d H:i:s'),
+        //     ];
+        // }
+
+        // Tag::insert($dataTags);
+
+
         $status = [
             'published', 'draft'
         ];
 
-        $faker = faker::create('id_ID');
 
         $getCats = collect(Category::all()->modelKeys());
         $getTags = collect(Tag::all()->modelKeys());
@@ -59,6 +79,7 @@ class PostSeeder extends Seeder
                 // 'status' => $status[rand(0, 1)],
                 'status' => "published",
                 'published_date' => Carbon::parse($faker->dateTimeThisMonth())->format('Y-m-d H:i:s')
+
             ]);
             $post->tags()->attach($selectedTags);
         }
