@@ -191,13 +191,13 @@ $(function () {
     });
 
     $("#btn-proFilter").on("click", function () {
-        proFilter();
+        tablePosts.search("").draw();
+        var title = $(this).data("pagetitle");
+        $("#titlePost")
+            .empty()
+            .append("Filtered " + title);
         closeFilter();
     });
-
-    function proFilter() {
-        tablePosts.search("").draw();
-    }
 
     function resetFilter() {
         $("#formFilter")[0].reset();
@@ -210,6 +210,8 @@ $(function () {
         $("#tglFilterField").val("");
         $("#tglFilter").data("daterangepicker").setStartDate(new Date());
         $("#tglFilter").data("daterangepicker").setEndDate(new Date());
+        var title = $("#resetFilter").data("pagetitle");
+        $("#titlePost").empty().append(title);
     }
     /**
      * ./END FILTER

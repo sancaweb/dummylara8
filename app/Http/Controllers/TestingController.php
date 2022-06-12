@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post\Category;
 use App\Models\User;
 use App\Models\Post\Tag;
 use App\Models\Post\Post;
@@ -16,20 +17,18 @@ class TestingController extends Controller
 {
     public function index()
     {
-        $string = 'http://localhost:8000/storage/photos/coding-background.jpg';
-
-        $split = explode("/storage/", $string);
-
-        $url = $split[0];
-        $file = $split[1];
-
+        $posts = Post::whereIn('category_id', [4])->get();
+        if ($posts->isEmpty()) {
+            $hasil = "Data Kosong";
+        } else {
+            $hasil = "Data Ditemukan";
+        }
 
 
 
         $dataJson = [
-            'string' => $string,
-            'url' => $url,
-            'file' => $file
+            'ketHasil' => $hasil,
+            'data' => $posts
         ];
         // dd($users);
 

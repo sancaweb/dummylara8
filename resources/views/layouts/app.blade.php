@@ -204,6 +204,11 @@
         <script src="{{ asset('js/pages/editPost.js?v=1.1') }}"></script>
     @endif
 
+    @if ($page == 'catTags')
+        <script src="{{ asset('js/pages/category.js?v=1.1') }}"></script>
+        <script src="{{ asset('js/pages/tag.js?v=1.1') }}"></script>
+    @endif
+
     @if ($page == 'dashboard')
         <script src="{{ asset('v1/plugins/jquery-mousewheel/jquery.mousewheel.js') }}"></script>
         <script src="{{ asset('v1/plugins/raphael/raphael.min.js') }}"></script>

@@ -3,7 +3,9 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\Ajax\PostAjax;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Post\CategoryController;
 use App\Http\Controllers\Post\PostController;
+use App\Http\Controllers\Post\TagController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +13,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\TestingController;
 use App\Http\Controllers\UserController;
+use App\Models\Post\Category;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +37,10 @@ Route::group(['middleware' => ['auth']], function () {
     //post
     Route::get('/ajax/post/tags', [PostAjax::class, 'getTags']);
     Route::get('/ajax/post/{encryptedPost}/select2tagbypost', [PostAjax::class, 'select2GetTagByPost']);
-    Route::patch('/ajax/post/status', [PostAjax::class, 'changeStatus']);
+    Route::get('/ajax/post/{string}/createcatslug', [PostAjax::class, 'createCatSlug']);
+    Route::get('/ajax/post/{string}/createtagslug', [PostAjax::class, 'createTagSlug']);
+    Route::get('/ajax/post/{id_category}/cekcatpost', [PostAjax::class, 'cekCatPost']);
+    Route::get('/ajax/post/getcats', [PostAjax::class, 'getCats']);
 });
 
 
@@ -82,19 +88,75 @@ Route::delete('user/{id}/delete', [UserController::class, 'delete'])->name('user
  * ADMIN
  */
 
+/**
+ * POST MODUL
+ */
+
+//post
 Route::group(['middleware' => ['auth', 'permission:post read']], function () {
     Route::get('/post', [PostController::class, 'index'])->name('post');
-    Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
-    Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
-    Route::get('/post/{id_post}/edit', [PostController::class, 'edit'])->name('post.edit');
-    Route::patch('/post/{id_post}/update', [PostController::class, 'update'])->name('post.update');
-    Route::delete('/post/{id_post}/delete', [PostController::class, 'delete'])->name('post.delete');
-
-
     Route::post('/post/datatable', [PostController::class, 'datatable']);
 });
 
+Route::group(['middleware' => ['auth', 'permission:post create']], function () {
+    Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
+    Route::post('/post/store', [PostController::class, 'store'])->name('post.store');
+});
 
+Route::group(['middleware' => ['auth', 'permission:post update']], function () {
+    Route::get('/post/{id_post}/edit', [PostController::class, 'edit'])->name('post.edit');
+    Route::patch('/post/{id_post}/update', [PostController::class, 'update'])->name('post.update');
+    Route::patch('/ajax/post/status', [PostAjax::class, 'changeStatus']);
+    Route::patch('/post/{id_category}/bulksetcat', [PostController::class, 'bulkSetCat'])->name('post.bulkSetCat');
+});
+
+Route::delete('/post/{id_post}/delete', [PostController::class, 'delete'])
+    ->name('post.delete')->middleware(['auth', 'permission:post delete']);
+
+//category
+Route::group(['middleware' => ['auth', 'permission:category read']], function () {
+    Route::get('/category', [CategoryController::class, 'index'])->name('category');
+    Route::post('/category/datatable', [CategoryController::class, 'datatable']);
+});
+
+Route::group(['middleware' => ['auth', 'permission:category create']], function () {
+    Route::post('/category', [CategoryController::class, 'store'])->name('category.store');
+});
+
+Route::group(['middleware' => ['auth', 'permission:category update']], function () {
+    Route::get('/category/{id_category}/edit', [CategoryController::class, 'edit'])->name('category.edit');
+    Route::patch('/category/{id_category}/update', [CategoryController::class, 'update'])->name('category.update');
+});
+
+Route::group(['middleware' => ['auth', 'permission:category delete']], function () {
+
+    Route::delete('/category/{id_category}/destroy', [CategoryController::class, 'destroy'])->name('category.destroy');
+});
+
+//tags
+Route::group(['middleware' => ['auth', 'permission:tag read']], function () {
+    // Route::get('/tag', [TagController::class, 'index'])->name('tag');
+    Route::post('/tag/datatable', [TagController::class, 'datatable']);
+});
+
+Route::group(['middleware' => ['auth', 'permission:tag create']], function () {
+    Route::post('/tag', [TagController::class, 'store'])->name('tag.store');
+});
+
+Route::group(['middleware' => ['auth', 'permission:tag update']], function () {
+    Route::get('/tag/{id_tag}/edit', [TagController::class, 'edit'])->name('tag.edit');
+    Route::patch('/tag/{id_tag}/update', [TagController::class, 'update'])->name('tag.update');
+});
+
+Route::group(['middleware' => ['auth', 'permission:tag delete']], function () {
+
+    Route::delete('/tag/{id_tag}/destroy', [TagController::class, 'destroy'])->name('tag.destroy');
+});
+
+
+/**
+ * ./END POST MODUL
+ */
 
 
 Route::group(['middleware' => ['auth', 'role:super admin']], function () {

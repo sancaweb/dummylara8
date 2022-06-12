@@ -45,7 +45,7 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview"
-                            {{ $page == 'post' || $page == 'editPost' || $page == 'postCats' || $page == 'postTags' ? 'style="display:block;"' : 'style="display:none;"' }}>
+                            {{ $page == 'post' || $page == 'editPost' || $page == 'catTags' ? 'style="display:block;"' : 'style="display:none;"' }}>
                             <li class="nav-item">
                                 <a href="{{ route('post') }}"
                                     class="nav-link {{ $page == 'post' || $page == 'editPost' ? 'active' : '' }}">
@@ -54,18 +54,16 @@
                                 </a>
                             </li>
 
-                            <li class="nav-item">
-                                <a href="#" class="nav-link {{ $page == 'postCats' ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Categories</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link {{ $page == 'postTags' ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Tags</p>
-                                </a>
-                            </li>
+                            @canany(['category read', 'tag read'])
+                                <li class="nav-item">
+                                    <a href="{{ route('category') }}"
+                                        class="nav-link {{ $page == 'catTags' ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Categories & Tags</p>
+                                    </a>
+                                </li>
+                            @endcanany
+
 
 
                         </ul>

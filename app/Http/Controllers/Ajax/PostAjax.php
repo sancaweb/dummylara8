@@ -6,11 +6,13 @@ use Exception;
 use App\Models\Post\Tag;
 use App\Models\Post\Post;
 use Illuminate\Http\Request;
+use App\Models\Post\Category;
 use App\Helpers\ResponseFormat;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
+use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 class PostAjax extends Controller
@@ -133,5 +135,58 @@ class PostAjax extends Controller
                 'error' => "Post Not Found"
             ], "Data Post tidak ditemukan", 404);
         }
+    }
+
+    public function createCatSlug($string)
+    {
+        $slug = SlugService::createSlug(Category::class, 'slug', $string);
+        return ResponseFormat::success([
+            'dataSlug' => $slug
+        ], "Slug Creted");
+    }
+    public function createTagSlug($string)
+    {
+        $slug = SlugService::createSlug(Tag::class, 'slug', $string);
+        return ResponseFormat::success([
+            'dataSlug' => $slug
+        ], "Slug Creted");
+    }
+
+    public function cekCatPost($id_category)
+    {
+        $getCat = Category::find($id_category);
+
+        if ($getCat) {
+            if ($getCat->posts()->exists()) {
+                return ResponseFormat::error([
+                    'error' => "Category Memiliki Post, Tentukan Category Pengganti"
+                ], "Post Found, Delete will be pending", 402);
+            } else {
+                return ResponseFormat::success([
+                    'message' => "Post Not Found, Delete will be process"
+                ], "Post Not Found, Delete will be process");
+            }
+        } else {
+            return ResponseFormat::error([
+                'error' => "Category Not Found"
+            ], "Category Not Found", 404);
+        }
+    }
+
+    public function getCats()
+    {
+
+        $getCats = Category::orderBy('name', 'ASC')->get();
+
+        $dataCategory = [];
+        foreach ($getCats as $cat) {
+            $dataCategory[] = [
+                'id' => $cat->id_category,
+                'text' => ucwords($cat->name)
+            ];
+        }
+        return ResponseFormat::success([
+            'dataCats' => $dataCategory
+        ], "Data Category ditemukan");
     }
 }

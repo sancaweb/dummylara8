@@ -18,7 +18,7 @@
                 <div class="col-12">
                     <div class="card card-outline card-success">
                         <div class="card-header">
-                            <h3 class="card-title" id="">{{ $pageTitle }}</h3>
+                            <h3 class="card-title" id="titlePost">{{ $pageTitle }}</h3>
                             <div class="card-tools">
                                 <button id="btn-resetFilterReload" type="button" class="btn btn-sm btn-flat btn-warning">
                                     <i class="fas fa-sync"></i> &nbsp; Reset Filter & Reload

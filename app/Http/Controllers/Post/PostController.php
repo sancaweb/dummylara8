@@ -577,4 +577,57 @@ class PostController extends Controller
 
         return response()->json($json_data, 200);
     }
+
+    /**
+     * DIPANGGIL SAAT DELETE CATEGORY (ajax)
+     */
+    public function bulkSetCat(Request $request, $oldCat)
+    {
+
+
+
+        $dataValidate['catSet'] = 'required';
+
+        $validator = Validator::make($request->all(), $dataValidate);
+
+        if ($validator->fails()) {
+            return ResponseFormat::error([
+                'errorValidator' => $validator->messages(),
+            ], 'Error Validator', 402);
+        }
+
+        $catSet = $request->catSet;
+
+        $getPosts = Post::whereIn('category_id', [$oldCat]);
+
+        if ($getPosts->get()->isEmpty()) {
+            return ResponseFormat::error([
+                'error' => "Post Not Found"
+            ], "Post Not Found", 404);
+        } else {
+            DB::beginTransaction();
+            try {
+
+                $getPosts->update([
+                    'category_id' => $catSet
+                ]);
+                // $setPosts = Post::whereIn('category_id', [4])->update([
+                //     'category_id' => $catSet
+                // ]);
+
+                // activity('category_management')->withProperties($setPosts)->performedOn($setPosts)->log('Update Post');
+                activity('category_management')->withProperties($getPosts)->performedOn(new Post)->log('Update Post');
+
+                DB::commit();
+                return ResponseFormat::success([
+                    'message' => "Post Updated",
+                ], "Post Updated");
+            } catch (Exception $error) {
+                DB::rollBack();
+                return ResponseFormat::error([
+                    'error' => $error->getMessage() . '-' . $error->getFile() . '-' . $error->getLine()
+                ], "Something went wrong", 400);
+            }
+        }
+    }
 }

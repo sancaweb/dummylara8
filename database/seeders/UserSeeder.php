@@ -40,7 +40,8 @@ class UserSeeder extends Seeder
 
             //posts
             'post create', 'post read', 'post update', 'post delete',
-            // 'post trash', 'post restore', 'post destroy'
+            'category create', 'category read', 'category update', 'category delete',
+            'tag create', 'tag read', 'tag update', 'tag delete',
 
         ];
 
@@ -92,6 +93,9 @@ class UserSeeder extends Seeder
             'user create', 'user read', 'user update',
 
             'post create', 'post read', 'post update', 'post delete',
+
+            'category create', 'category read', 'category update', 'category delete',
+            'tag create', 'tag read', 'tag update', 'tag delete',
             // 'post trash', 'post restore', 'post destroy'
 
         ]);

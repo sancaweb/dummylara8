@@ -90,7 +90,8 @@
                             class="fa fa-times"></i>&nbsp;Close</button>
                     <button data-pagetitle="{{ $pageTitle }}" type="button" class="btn btn-success" id="resetFilter">
                         <i class="fas fa-sync"></i>&nbsp;Reset</button>
-                    <button id="btn-proFilter" type="button" class="btn btn-primary">
+                    <button data-pagetitle="{{ $pageTitle }}" id="btn-proFilter" type="button"
+                        class="btn btn-primary">
                         <i class="fas fa-filter"></i>&nbsp;Filter
                     </button>
 
