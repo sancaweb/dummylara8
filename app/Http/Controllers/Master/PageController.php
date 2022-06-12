@@ -1,23 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\Post;
+namespace App\Http\Controllers\Master;
 
 use Exception;
 use Carbon\Carbon;
-use App\Models\Post\Tag;
-use App\Models\Post\Post;
+use App\Models\User;
+use App\Models\Master\Page;
 use Illuminate\Http\Request;
-use App\Models\Post\Category;
 use App\Helpers\ResponseFormat;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Encryption\DecryptException;
 
-class PostController extends Controller
+class PageController extends Controller
 {
+
     private function _decryptString($string)
     {
         try {
@@ -26,7 +24,6 @@ class PostController extends Controller
             return false;
         }
     }
-
     /**
      * Display a listing of the resource.
      *
@@ -34,16 +31,14 @@ class PostController extends Controller
      */
     public function index()
     {
-        $categories = Category::orderBy('name', 'ASC')->get();
         $penulis = User::role(['admin', 'super admin'])->get();
         $dataPage = [
-            "pageTitle" => "Data Post",
-            "page" => "post",
-            "categories" => $categories,
+            "pageTitle" => "Data Page",
+            "page" => "page",
             "penulis" => $penulis
         ];
 
-        return view('post.index', $dataPage);
+        return view('master.page.index', $dataPage);
     }
 
     /**
@@ -53,14 +48,13 @@ class PostController extends Controller
      */
     public function create()
     {
-        $categories = Category::orderBy('name', 'ASC')->get();
+
         $dataPage = [
-            "pageTitle" => "Input Post",
-            "page" => "post",
-            "categories" => $categories
+            "pageTitle" => "Input Page",
+            "page" => "page",
         ];
 
-        return view('post.inputForm', $dataPage);
+        return view('master.page.inputForm', $dataPage);
     }
 
     /**
@@ -71,9 +65,9 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+
         $dataValidate['title'] = 'required';
         $dataValidate['content'] = 'required';
-        $dataValidate['category_id'] = 'required';
         $dataValidate['published_date'] = ['required'];
         $dataValidate['status'] = ['required'];
 
@@ -107,49 +101,29 @@ class PostController extends Controller
         }
 
 
-        $categoryId = $request->input('category_id');
         $publishedDate = $request->input('published_date');
         $status = $request->status;
-        $tags = $request->tags;
 
         DB::beginTransaction();
         try {
-            $listTags = [];
-            foreach ($tags as $tag) {
-                $cekTag = Tag::select('id_tag')->where('id_tag', $tag)->first();
 
-                if ($cekTag) {
-                    array_push($listTags, $tag);
-                } else {
-                    $newTag = Tag::create([
-                        'name' => $tag
-                    ]);
 
-                    array_push($listTags, $newTag->id_tag);
-                }
-            }
-
-            $newPost = Post::create([
+            $newPage = Page::create([
                 'title' => $title,
                 'content' => $content,
-                'category_id' => $categoryId,
                 'published_date' => Carbon::createFromFormat('d-m-Y H:i:s', $publishedDate)->format('Y-m-d H:i:s'),
                 'status' => $status,
                 'featured_image' => $featuredImage,
                 'thumb' => $thumb,
             ]);
 
-            if (!empty($listTags)) {
 
-                $newPost->tags()->attach($listTags);
-            }
-
-            activity('post_management')->withProperties($newPost)->performedOn($newPost)->log('Create Post');
+            activity('page_management')->withProperties($newPage)->performedOn($newPage)->log('Create Page');
 
             DB::commit();
             return ResponseFormat::success([
-                'message' => "Post Created",
-            ], "Post Created");
+                'message' => "Page Created",
+            ], "Page Created");
         } catch (Exception $error) {
             DB::rollBack();
             return ResponseFormat::error([
@@ -164,7 +138,7 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($encryptedPost)
+    public function show($encryptedPage)
     {
     }
 
@@ -174,51 +148,50 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($encryptedPost)
+    public function edit($encryptedPage)
     {
-        $idPost = $this->_decryptString($encryptedPost);
-        if (!$idPost) {
+
+        $idPage = $this->_decryptString($encryptedPage);
+        if (!$idPage) {
 
 
-            return redirect()->route('post')->with(
+            return redirect()->route('page')->with(
                 [
-                    'messageAlert' => "Error Decrypt ID Post",
+                    'messageAlert' => "Error Decrypt ID Page",
                     "alertClass" => "danger"
                 ]
             );
         }
 
-        $getPost = Post::find($idPost);
-        if ($getPost) {
+        $getPage = Page::find($idPage);
+        if ($getPage) {
 
-            $dataPost = [
-                "id_post" => $getPost->encryptedId(),
-                "title" => $getPost->title,
-                "slug" => $getPost->slug,
-                "content" => $getPost->content,
-                "category_id" => $getPost->category_id,
-                "status" => $getPost->status,
-                "featured_image" => $getPost->takeImage(),
-                "thumb" => $getPost->takeThumb(),
-                "published_date" => Carbon::parse($getPost->published_date)->format('d-m-Y H:i:s'),
-            ];
-
-
-            $categories = Category::orderBy('name', 'ASC')->get();
             $dataPage = [
-                "pageTitle" => "Input Post",
-                "page" => "editPost",
-                "categories" => $categories,
-                "dataPost" => $dataPost,
+                "id_page" => $getPage->encryptedId(),
+                "title" => $getPage->title,
+                "slug" => $getPage->slug,
+                "content" => $getPage->content,
+                "status" => $getPage->status,
+                "featured_image" => $getPage->takeImage(),
+                "thumb" => $getPage->takeThumb(),
+                "published_date" => Carbon::parse($getPage->published_date)->format('d-m-Y H:i:s'),
             ];
 
 
-            return view('post.editForm', $dataPage);
+
+            $dataPage = [
+                "pageTitle" => "Edit Page",
+                "page" => "editPage",
+                "dataPage" => $dataPage,
+            ];
+
+
+            return view('master.page.editForm', $dataPage);
         } else {
 
-            return redirect()->route('post')->with(
+            return redirect()->route('page')->with(
                 [
-                    'messageAlert' => "Data Post tidak ditemukan",
+                    'messageAlert' => "Data Page tidak ditemukan",
                     "alertClass" => "danger"
                 ]
             );
@@ -232,22 +205,22 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $encryptedPost)
+    public function update(Request $request, $encryptedPage)
     {
-        $idPost = $this->_decryptString($encryptedPost);
-        if (!$idPost) {
+
+        $idPage = $this->_decryptString($encryptedPage);
+        if (!$idPage) {
             return ResponseFormat::error([
-                'error' => "Error Decrypt ID Post"
-            ], "Error Decrypt ID Post", 400);
+                'error' => "Error Decrypt ID Page"
+            ], "Error Decrypt ID Page", 400);
         }
 
-        $getPost = Post::find($idPost);
+        $getPage = Page::find($idPage);
 
-        if ($getPost) {
+        if ($getPage) {
 
             $dataValidate['title'] = 'required';
             $dataValidate['content'] = 'required';
-            $dataValidate['category_id'] = 'required';
             $dataValidate['published_date'] = ['required'];
 
             $validator = Validator::make($request->all(), $dataValidate);
@@ -280,60 +253,40 @@ class PostController extends Controller
             }
 
 
-            $categoryId = $request->input('category_id');
+
             $publishedDate = $request->input('published_date');
             $status = $request->status;
-            $tags = $request->tags;
 
             DB::beginTransaction();
             try {
 
-                //update Post
-                $getPost->update([
+                //update Page
+                $getPage->update([
                     'title' => $title,
                     'content' => $content,
-                    'category_id' => $categoryId,
                     'status' => $status,
                     'published_date' => Carbon::createFromFormat('d-m-Y H:i:s', $publishedDate)->format('Y-m-d H:i:s'),
                     'featured_image' => $featuredImage,
                     'thumb' => $thumb,
                 ]);
 
-                $listTags = [];
-                foreach ($tags as $tag) {
-                    $cekTag = Tag::select('id_tag')->where('id_tag', $tag)->first();
 
-                    if ($cekTag) {
-                        array_push($listTags, $tag);
-                    } else {
-                        $newTag = Tag::create([
-                            'name' => $tag
-                        ]);
-
-                        array_push($listTags, $newTag->id_tag);
-                    }
-                }
-
-                if (!empty($listTags)) {
-                    $getPost->tags()->sync($listTags);
-                }
-
-                activity('post_management')->withProperties($getPost)->performedOn($getPost)->log('Update Post');
+                activity('page_management')->withProperties($getPage)->performedOn($getPage)->log('Update Page');
 
                 DB::commit();
                 return ResponseFormat::success([
-                    'message' => "Post Updated",
-                ], "Post Updated");
+                    'message' => "Page Updated",
+                ], "Page Updated");
             } catch (Exception $error) {
                 DB::rollBack();
                 return ResponseFormat::error([
                     'error' => $error->getMessage() . '-' . $error->getFile() . '-' . $error->getLine()
                 ], "Something went wrong", 400);
             }
-        } else { //else $getPost
+        } else { //else $getPage
             return ResponseFormat::error([
-                'error' => "Post Not Found"
-            ], "Data Post tidak ditemukan", 404);
+                'error' => "Page Not Found"
+            ], "Data Page tidak ditemukan", 404);
         }
     }
 
@@ -348,26 +301,26 @@ class PostController extends Controller
         //
     }
 
-    public function delete($encryptedPost)
+    public function delete($encryptedPage)
     {
-        $idPost = $this->_decryptString($encryptedPost);
-        if (!$idPost) {
+        $idPage = $this->_decryptString($encryptedPage);
+        if (!$idPage) {
             return ResponseFormat::error([
-                'error' => "Error Decrypt ID Post"
-            ], "Error Decrypt ID Post", 400);
+                'error' => "Error Decrypt ID Page"
+            ], "Error Decrypt ID Page", 400);
         }
 
-        $getPost = Post::find($idPost);
-        if ($getPost) {
+        $getPage = Page::find($idPage);
+        if ($getPage) {
             DB::beginTransaction();
             try {
-                $getPost->delete();
-                activity('post_management')->withProperties($getPost)->performedOn($getPost)->log('Delete Post');
+                $getPage->delete();
+                activity('page_management')->withProperties($getPage)->performedOn($getPage)->log('Delete Page');
 
                 DB::commit();
                 return ResponseFormat::success([
-                    'message' => "Status Post Deleted",
-                ], "Status Post Deleted");
+                    'message' => "Status Page Deleted",
+                ], "Status Page Deleted");
             } catch (Exception $error) {
                 DB::rollBack();
                 return ResponseFormat::error([
@@ -376,8 +329,8 @@ class PostController extends Controller
             }
         } else {
             return ResponseFormat::error([
-                'error' => "Post Not Found"
-            ], "Data Post tidak ditemukan", 404);
+                'error' => "Page Not Found"
+            ], "Data Page tidak ditemukan", 404);
         }
     }
 
@@ -385,16 +338,14 @@ class PostController extends Controller
     {
 
         $columns = array(
-            0 => 'id_post',
+            0 => 'id_page',
             1 => 'title',
-            2 => 'post_created_by',
-            3 => 'category_name',
-            4 => '',
-            5 => 'published_date',
-            6 => 'status',
+            2 => 'page_created_by',
+            3 => 'published_date',
+            4 => 'status',
         );
 
-        $totalData = Post::count();
+        $totalData = Page::count();
         $totalFiltered = $totalData;
 
         $limit = $request->input('length');
@@ -432,15 +383,6 @@ class PostController extends Controller
             $dataFilter['titleContentFilter'] = $titleContentFilter;
         }
 
-        $catFilter = $request->input('catFilter');
-        if (!empty($catFilter)) {
-            $dataFilter['catFilter'] = $catFilter;
-        }
-
-        $tagFilter = $request->input('tagFilter');
-        if (!empty($tagFilter)) {
-            $dataFilter['tagFilter'] = $tagFilter;
-        }
 
         $userFilter = $request->input('userFilter');
         if (!empty($userFilter)) {
@@ -453,29 +395,15 @@ class PostController extends Controller
         }
 
         //getData
-        $posts = Post::getData($dataFilter, $settings);
-        $totalFiltered = Post::countData($dataFilter);
+        $pages = Page::getData($dataFilter, $settings);
+        $totalFiltered = Page::countData($dataFilter);
 
         $dataTable = [];
 
-        if (!empty($posts)) {
+        if (!empty($pages)) {
             $no = $start;
-            foreach ($posts as $data) {
+            foreach ($pages as $data) {
 
-                $tags = '';
-                if ($data->tags()->exists()) {
-                    $dataTags = $data->tags;
-                    $lastArray = array_key_last($dataTags->toArray());
-
-                    foreach ($data->tags as $keyTag => $tag) {
-                        if ($keyTag == $lastArray) {
-
-                            $tags .= $tag->name;
-                        } else {
-                            $tags .= $tag->name . ', ';
-                        }
-                    }
-                }
 
                 $statusClass = 'btn-success';
                 $status = "Published";
@@ -487,9 +415,7 @@ class PostController extends Controller
                 $no++;
                 $nestedData['no'] = $no;
                 $nestedData['title'] = $data->title;
-                $nestedData['post_created_by'] = $data->post_created_by;
-                $nestedData['category_name'] = $data->category_name;
-                $nestedData['tags'] = $tags;
+                $nestedData['page_created_by'] = $data->page_created_by;
                 $nestedData['published_date'] = Carbon::parse($data->published_date)->format('d M Y H:i:s');
                 $nestedData['status'] = '<button data-id="' . $data->encryptedId() . '" data-title="' . ucwords($data->title) . '" data-status="' . $data->status . '" class="btn btn-icon ' . $statusClass . ' btnStatus" data-toggle="tooltip" title="" data-original-title="Edit Status">
                 <i class="fas fa-exchange-alt"></i>&nbsp; ' . $status . '</button>';
@@ -501,7 +427,7 @@ class PostController extends Controller
                                         Action
                                     </button>
                                     <div class="dropdown-menu">
-                                        <a href="' . route('post.edit', $data->encryptedId()) . '" class="dropdown-item">
+                                        <a href="' . route('page.edit', $data->encryptedId()) . '" class="dropdown-item">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
 
@@ -525,58 +451,5 @@ class PostController extends Controller
         );
 
         return response()->json($json_data, 200);
-    }
-
-    /**
-     * DIPANGGIL SAAT DELETE CATEGORY (ajax)
-     */
-    public function bulkSetCat(Request $request, $oldCat)
-    {
-
-
-
-        $dataValidate['catSet'] = 'required';
-
-        $validator = Validator::make($request->all(), $dataValidate);
-
-        if ($validator->fails()) {
-            return ResponseFormat::error([
-                'errorValidator' => $validator->messages(),
-            ], 'Error Validator', 402);
-        }
-
-        $catSet = $request->catSet;
-
-        $getPosts = Post::whereIn('category_id', [$oldCat]);
-
-        if ($getPosts->get()->isEmpty()) {
-            return ResponseFormat::error([
-                'error' => "Post Not Found"
-            ], "Post Not Found", 404);
-        } else {
-            DB::beginTransaction();
-            try {
-
-                $getPosts->update([
-                    'category_id' => $catSet
-                ]);
-                // $setPosts = Post::whereIn('category_id', [4])->update([
-                //     'category_id' => $catSet
-                // ]);
-
-                // activity('category_management')->withProperties($setPosts)->performedOn($setPosts)->log('Update Post');
-                activity('category_management')->withProperties($getPosts)->performedOn(new Post)->log('Update Post');
-
-                DB::commit();
-                return ResponseFormat::success([
-                    'message' => "Post Updated",
-                ], "Post Updated");
-            } catch (Exception $error) {
-                DB::rollBack();
-                return ResponseFormat::error([
-                    'error' => $error->getMessage() . '-' . $error->getFile() . '-' . $error->getLine()
-                ], "Something went wrong", 400);
-            }
-        }
     }
 }

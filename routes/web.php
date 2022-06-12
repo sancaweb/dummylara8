@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\Ajax\PageAjax;
 use App\Http\Controllers\Ajax\PostAjax;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Master\PageController;
 use App\Http\Controllers\Post\CategoryController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Post\TagController;
@@ -157,6 +159,35 @@ Route::group(['middleware' => ['auth', 'permission:tag delete']], function () {
 /**
  * ./END POST MODUL
  */
+
+/**
+ * MODUL PAGES
+ */
+
+Route::group(['middleware' => ['auth', 'permission:page create']], function () {
+    Route::get('/page/create', [PageController::class, 'create'])->name('page.create');
+    Route::post('/page/store', [PageController::class, 'store'])->name('page.store');
+});
+
+Route::group(['middleware' => ['auth', 'permission:page read']], function () {
+    Route::get('/page', [PageController::class, 'index'])->name('page');
+    Route::post('/page/datatable', [PageController::class, 'datatable']);
+});
+
+
+
+Route::group(['middleware' => ['auth', 'permission:page update']], function () {
+    Route::get('/page/{id_post}/edit', [PageController::class, 'edit'])->name('page.edit');
+    Route::patch('/page/{id_post}/update', [PageController::class, 'update'])->name('page.update');
+    Route::patch('/ajax/page/status', [PageAjax::class, 'changeStatus']);
+});
+
+Route::group(['middleware' => ['auth', 'permission:page delete']], function () {
+    Route::delete('/page/{id_post}/delete', [PageController::class, 'delete'])->name('page.delete');
+});
+
+
+
 
 
 Route::group(['middleware' => ['auth', 'role:super admin']], function () {

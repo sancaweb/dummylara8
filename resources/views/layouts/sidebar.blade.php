@@ -33,7 +33,17 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-header">DATA MASTER</li>
 
+                <li class="nav-item">
+                    <a href="{{ route('page') }}" class="nav-link {{ $page == 'page' ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-file-alt"></i> &nbsp;
+                        <p>
+                            Pages
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-header">MENU UTAMA</li>
                 @can('post read')
                     <li
                         class="nav-item {{ $page == 'post' || $page == 'editPost' || $page == 'postCats' || $page == 'postTags' ? 'menu-is-opening menu-open' : '' }}">

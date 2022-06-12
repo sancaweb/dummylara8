@@ -22,8 +22,6 @@ class PostSeeder extends Seeder
     {
         $faker = faker::create('id_ID');
 
-        $faker = faker::create('id_ID');
-
 
         $categories = [
             'pertandingan', 'kompetisi', 'pemain', 'club'

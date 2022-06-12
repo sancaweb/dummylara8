@@ -43,6 +43,9 @@ class UserSeeder extends Seeder
             'category create', 'category read', 'category update', 'category delete',
             'tag create', 'tag read', 'tag update', 'tag delete',
 
+            //pages
+            'page create', 'page read', 'page update', 'page delete'
+
         ];
 
         foreach ($permissions as $permit) {
@@ -96,7 +99,8 @@ class UserSeeder extends Seeder
 
             'category create', 'category read', 'category update', 'category delete',
             'tag create', 'tag read', 'tag update', 'tag delete',
-            // 'post trash', 'post restore', 'post destroy'
+            //pages
+            'page create', 'page read', 'page update', 'page delete'
 
         ]);
 

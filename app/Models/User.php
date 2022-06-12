@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Master\Page;
 use Illuminate\Support\Facades\Crypt;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Facades\Storage;
@@ -71,5 +72,10 @@ class User extends Authenticatable
                 return asset("images/no-image.png");
             }
         }
+    }
+
+    public function pages()
+    {
+        return $this->hasMany(Page::class, 'created_by', 'id');
     }
 }

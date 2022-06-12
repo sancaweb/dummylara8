@@ -9,35 +9,29 @@ $(function () {
     var columnsTable = [
         { data: "no" },
         { data: "title" },
-        { data: "post_created_by" },
-        { data: "category_name" },
-        { data: "tags" },
+        { data: "page_created_by" },
         { data: "published_date" },
         { data: "status" },
         { data: "action" },
     ];
 
-    var tablePosts = $("#table-posts").DataTable({
+    var tablePages = $("#table-pages").DataTable({
         // "searching": false,
         order: [[0, "DESC"]],
         processing: true,
         serverSide: true,
         ajax: {
-            url: base_url + "/post/datatable",
+            url: base_url + "/page/datatable",
             dataType: "json",
             type: "POST",
             data: function (dataFilter) {
                 var tglFilter = $("#tglFilterField").val();
                 var titleContentFilter = $("#titleContentFilter").val();
-                var catFilter = $("#catFilter").val();
-                var tagFilter = $("#tagFilter").val();
                 var userFilter = $("#userFilter").val();
                 var statusFilter = $("#statusFilter").val();
 
                 dataFilter.tglFilter = tglFilter;
                 dataFilter.titleContentFilter = titleContentFilter;
-                dataFilter.catFilter = catFilter;
-                dataFilter.tagFilter = tagFilter;
                 dataFilter.userFilter = userFilter;
                 dataFilter.statusFilter = statusFilter;
             },
@@ -100,21 +94,21 @@ $(function () {
             },
         ],
     });
-    $("#table-posts_filter input").off();
-    $("#table-posts_filter input").on("keyup", function (e) {
+    $("#table-pages_filter input").off();
+    $("#table-pages_filter input").on("keyup", function (e) {
         if (e.code == "Enter") {
-            tablePosts.search(this.value).draw();
+            tablePages.search(this.value).draw();
         }
     });
 
     function refreshTable() {
-        tablePosts.search("").draw();
+        tablePages.search("").draw();
     }
 
-    var btnPostReload = document.getElementById("btn-postReload");
+    var btnPageReload = document.getElementById("btn-pageReload");
 
-    if (btnPostReload) {
-        btnPostReload.addEventListener("click", function () {
+    if (btnPageReload) {
+        btnPageReload.addEventListener("click", function () {
             refreshTable();
         });
     }
@@ -126,7 +120,6 @@ $(function () {
      */
 
     $("#btn-filter").on("click", function () {
-        filterFunctions();
         $("#modalFilter").modal({
             show: true,
             backdrop: "static",
@@ -157,30 +150,6 @@ $(function () {
         }
     );
 
-    function filterFunctions() {
-        $("#tagFilter")
-            .select2({
-                theme: "bootstrap4",
-                minimumInputLength: 3,
-                placeholder: "Pilih Tag",
-                allowClear: true,
-                ajax: {
-                    url: base_url + "/ajax/post/tags",
-                    dataType: "json",
-                    quietMillis: 100,
-                    data: function (params) {
-                        return {
-                            search: params.term,
-                        };
-                    },
-                    processResults: function (data, params) {
-                        return { results: data };
-                    },
-                },
-            })
-            .on("select2:select", function (res) {});
-    }
-
     //reset
     $("#btn-resetFilterReload").on("click", function () {
         resetFilter();
@@ -191,9 +160,9 @@ $(function () {
     });
 
     $("#btn-proFilter").on("click", function () {
-        tablePosts.search("").draw();
+        tablePages.search("").draw();
         var title = $(this).data("pagetitle");
-        $("#titlePost")
+        $("#titlePage")
             .empty()
             .append("Filtered " + title);
         closeFilter();
@@ -201,17 +170,12 @@ $(function () {
 
     function resetFilter() {
         $("#formFilter")[0].reset();
-        $("#catFilter").val("").trigger("change");
-
-        $("#tagFilter").empty();
-
-        filterFunctions();
 
         $("#tglFilterField").val("");
         $("#tglFilter").data("daterangepicker").setStartDate(new Date());
         $("#tglFilter").data("daterangepicker").setEndDate(new Date());
         var title = $("#resetFilter").data("pagetitle");
-        $("#titlePost").empty().append(title);
+        $("#titlePage").empty().append(title);
     }
     /**
      * ./END FILTER
@@ -258,35 +222,6 @@ $(function () {
         },
     });
 
-    $("#categories,#catFilter").select2({
-        theme: "bootstrap4",
-        placeholder: "Select Category",
-        allowClear: true,
-    });
-
-    $("#tags")
-        .select2({
-            theme: "bootstrap4",
-            minimumInputLength: 3,
-            multiple: true,
-            allowClear: true,
-            tags: true,
-            ajax: {
-                url: base_url + "/ajax/post/tags",
-                dataType: "json",
-                quietMillis: 100,
-                data: function (params) {
-                    return {
-                        search: params.term,
-                    };
-                },
-                processResults: function (data, params) {
-                    return { results: data };
-                },
-            },
-        })
-        .on("select2:select", function (res) {});
-
     $("#inputFoto").filemanager("image");
 
     $("#published_date").datetimepicker({
@@ -300,7 +235,7 @@ $(function () {
         useCurrent: false,
     });
 
-    $("#formPost").on("submit", function (e) {
+    $("#formPage").on("submit", function (e) {
         e.preventDefault();
         Swal.fire({
             imageUrl: base_url + "/images/loading.gif",
@@ -309,8 +244,8 @@ $(function () {
             title: "Loading ...",
             allowOutsideClick: false,
         });
-        var formData = new FormData($("#formPost")[0]);
-        var url = $("#formPost").attr("action");
+        var formData = new FormData($("#formPage")[0]);
+        var url = $("#formPage").attr("action");
         $.ajax({
             url: url,
             type: "POST",
@@ -326,7 +261,7 @@ $(function () {
                     timer: 2000,
                     allowOutsideClick: false,
                 }).then(function () {
-                    window.location.replace("/post");
+                    window.location.replace("/page");
                 });
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -377,12 +312,12 @@ $(function () {
     });
 
     //rubah status
-    $("#table-posts").on("click", ".btnStatus", function () {
+    $("#table-pages").on("click", ".btnStatus", function () {
         var title = $(this).data("title");
 
         Swal.fire({
             title: "Anda yakin?",
-            text: "Anda yakin ingin merubah Post dengan judul: " + title + "?",
+            text: "Anda yakin ingin merubah Page dengan judul: " + title + "?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -399,14 +334,14 @@ $(function () {
                     allowOutsideClick: false,
                 });
 
-                var idPost = $(this).data("id");
+                var idPage = $(this).data("id");
                 var status = $(this).data("status");
 
                 $.ajax({
-                    url: base_url + "/ajax/post/status",
+                    url: base_url + "/ajax/page/status",
                     type: "POST",
                     data: {
-                        idPost: idPost,
+                        idPage: idPage,
                         status: status,
                         _method: "patch",
                     },
@@ -473,14 +408,14 @@ $(function () {
     //./end rubah status
 
     /**
-     * DELETE POST
+     * DELETE Page
      */
-    $("#table-posts").on("click", ".btn-delete", function () {
+    $("#table-pages").on("click", ".btn-delete", function () {
         var title = $(this).data("title");
         Swal.fire({
             title: "Anda yakin?",
             text:
-                "Anda yakin ingin menghapus Post dengan judul: " + title + "?",
+                "Anda yakin ingin menghapus Page dengan judul: " + title + "?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -497,8 +432,8 @@ $(function () {
                     allowOutsideClick: false,
                 });
 
-                var idPost = $(this).data("id");
-                var urlDelete = base_url + "/post/" + idPost + "/delete";
+                var idPage = $(this).data("id");
+                var urlDelete = base_url + "/page/" + idPage + "/delete";
                 $.ajax({
                     url: urlDelete,
                     type: "DELETE",
