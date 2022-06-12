@@ -109,40 +109,43 @@ class Post extends Model
             ->leftJoin('users', 'posts.created_by', '=', 'users.id')
             ->with('tags:id_tag,slug,name');
 
-        // if (isset($dataFilter['startDateFilter'])) {
-        //     $startDateFilter = $dataFilter['startDateFilter'];
-        //     $data->whereDate('tgl_kedatangan', '>=', $startDateFilter);
-        // }
+        if (isset($dataFilter['startDateFilter'])) {
+            $startDateFilter = $dataFilter['startDateFilter'];
+            $data->whereDate('published_date', '>=', $startDateFilter);
+        }
 
-        // if (isset($dataFilter['endDateFilter'])) {
-        //     $endDateFilter = $dataFilter['endDateFilter'];
-        //     $data->whereDate('tgl_kedatangan', '<=', $endDateFilter);
-        // }
+        if (isset($dataFilter['endDateFilter'])) {
+            $endDateFilter = $dataFilter['endDateFilter'];
+            $data->whereDate('published_date', '<=', $endDateFilter);
+        }
 
-        // if (isset($dataFilter['noSoFilter'])) {
-        //     $noSoFilter = $dataFilter['noSoFilter'];
-        //     $data->where('no_so', $noSoFilter);
-        // }
+        if (isset($dataFilter['titleContentFilter'])) {
+            $titleContentFilter = $dataFilter['titleContentFilter'];
+            $data->where('title', 'LIKE', "%{$titleContentFilter}%")
+                ->orWhere('content', 'LIKE', "%{$titleContentFilter}%");
+        }
 
-        // if (isset($dataFilter['noLoFilter'])) {
-        //     $noLoFilter = $dataFilter['noLoFilter'];
-        //     $data->where('no_lo', $noLoFilter);
-        // }
+        if (isset($dataFilter['catFilter'])) {
+            $catFilter = $dataFilter['catFilter'];
+            $data->where('category_id', $catFilter);
+        }
 
-        // if (isset($dataFilter['bbmIdFilter'])) {
-        //     $bbmId = $dataFilter['bbmIdFilter'];
-        //     $data->where('bbm_id', $bbmId);
-        // }
+        if (isset($dataFilter['tagFilter'])) {
+            $tagFilter = $dataFilter['tagFilter'];
+            $data->whereHas('tags', function ($q) use ($tagFilter) {
+                $q->where('tag_id', $tagFilter);
+            });
+        }
 
-        // if (isset($dataFilter['driverFilter'])) {
-        //     $driverFilter = $dataFilter['driverFilter'];
-        //     $data->where('driver_name', $driverFilter);
-        // }
+        if (isset($dataFilter['userFilter'])) {
+            $userFilter = $dataFilter['userFilter'];
+            $data->where('created_by', $userFilter);
+        }
 
-        // if (isset($dataFilter['noPolFilter'])) {
-        //     $noPolFilter = $dataFilter['noPolFilter'];
-        //     $data->where('no_pol', $noPolFilter);
-        // }
+        if (isset($dataFilter['statusFilter'])) {
+            $statusFilter = $dataFilter['statusFilter'];
+            $data->where('status', $statusFilter);
+        }
 
         if (isset($dataFilter['search'])) {
             $search = $dataFilter['search'];

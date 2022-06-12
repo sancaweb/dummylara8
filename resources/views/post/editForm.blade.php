@@ -145,8 +145,8 @@
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer text-right">
-                                <button type="button" class="btn btn-secondary btn-flat btn-danger closeForm"
-                                    data-dismiss="modal"><i class="far fa-window-close"></i>&nbsp;Close</button>
+                                <a href="{{ route('post') }}" class="btn btn-secondary btn-flat btn-danger "><i
+                                        class="far fa-window-close"></i>&nbsp;Cancel</a>
                                 <button type="submit" class="btn btn-primary btn-flat"><i
                                         class="fas fa-save"></i>&nbsp;Save
                                     changes</button>

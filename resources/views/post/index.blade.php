@@ -18,24 +18,39 @@
                 <div class="col-12">
                     <div class="card card-outline card-success">
                         <div class="card-header">
-                            <h3 class="card-title">{{ $pageTitle }}</h3>
+                            <h3 class="card-title" id="">{{ $pageTitle }}</h3>
                             <div class="card-tools">
-                                <a href="{{ route('post.create') }}" class="btn btn-sm btn-flat btn-primary openForm">
-                                    <i class="fas fa-plus"></i> Tambah Post
-                                </a>
+                                <button id="btn-resetFilterReload" type="button" class="btn btn-sm btn-flat btn-warning">
+                                    <i class="fas fa-sync"></i> &nbsp; Reset Filter & Reload
+                                </button>
                                 <button id="btn-postReload" type="button" class="btn btn-sm btn-flat btn-success">
                                     <i class="fas fa-sync"></i> &nbsp; Reload
                                 </button>
-                                @can('post delete')
-                                    <a href="#" type="button" class="btn btn-sm btn-flat btn-danger">
-                                        <i class="fas fa-trash"></i> &nbsp; Post Trash
-                                    </a>
-                                @endcan
 
-                            </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-flat btn-primary dropdown-toggle"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-tools"></i>&nbsp;Tools
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right">
+
+                                        <a href="{{ route('post.create') }}" class="dropdown-item">
+                                            <i class="fas fa-plus"></i> Tambah Post
+                                        </a>
+
+                                        <button id="btn-filter" type="button" class="dropdown-item">
+                                            <i class="fas fa-sync"></i> &nbsp; Filter
+                                        </button>
+
+                                    </div>
+                                </div>
+
+
+
+                            </div> <!-- ./card-tools -->
                         </div>
                         <!-- /.card-header -->
-                        <div class="card-body">
+                        <div class="card-body table-responsive">
                             <table id="table-posts" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
@@ -66,4 +81,5 @@
         </div>
         <!-- ./ .container-fluid -->
     </section>
+    @include('post.modalFilter')
 @endsection

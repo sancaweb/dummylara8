@@ -47,7 +47,7 @@
 
 </head>
 
-<body class="hold-transition dark-mode sidebar-mini sidebar-collapse">
+<body class="hold-transition sidebar-mini sidebar-collapse">
 
     <!-- Site wrapper -->
     <div class="wrapper">
@@ -194,7 +194,7 @@
         <script src="{{ asset('vendor/laravel-filemanager/js/stand-alone-button.js') }}"></script>
         <script src="{{ asset('js/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
 
-        <script src="{{ asset('js/pages/post.js?v=1.1') }}"></script>
+        <script src="{{ asset('js/pages/post.js?v=1.2') }}"></script>
     @endif
 
     @if ($page == 'editPost')

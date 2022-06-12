@@ -27,18 +27,19 @@ $(function () {
             dataType: "json",
             type: "POST",
             data: function (dataFilter) {
-                // var tglFilter = $("#tglFilterField").val();
-                // var noSoFilter = $("#noSoFilter").val();
-                // var noLoFilter = $("#noLoFilter").val();
-                // var bbmIdFilter = $("#bbmIdFilter").val();
-                // var driverFilter = $("#driverFilter").val();
-                // var noPolFilter = $("#noPolFilter").val();
-                // dataFilter.tglFilter = tglFilter;
-                // dataFilter.noSoFilter = noSoFilter;
-                // dataFilter.noLoFilter = noLoFilter;
-                // dataFilter.bbmIdFilter = bbmIdFilter;
-                // dataFilter.driverFilter = driverFilter;
-                // dataFilter.noPolFilter = noPolFilter;
+                var tglFilter = $("#tglFilterField").val();
+                var titleContentFilter = $("#titleContentFilter").val();
+                var catFilter = $("#catFilter").val();
+                var tagFilter = $("#tagFilter").val();
+                var userFilter = $("#userFilter").val();
+                var statusFilter = $("#statusFilter").val();
+
+                dataFilter.tglFilter = tglFilter;
+                dataFilter.titleContentFilter = titleContentFilter;
+                dataFilter.catFilter = catFilter;
+                dataFilter.tagFilter = tagFilter;
+                dataFilter.userFilter = userFilter;
+                dataFilter.statusFilter = statusFilter;
             },
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -120,6 +121,100 @@ $(function () {
 
     /** ./end datatable */
 
+    /**FILTER
+     *
+     */
+
+    $("#btn-filter").on("click", function () {
+        filterFunctions();
+        $("#modalFilter").modal({
+            show: true,
+            backdrop: "static",
+            keyboard: false, // to prevent closing with Esc button (if you want this too)
+        });
+    });
+
+    $(".closeFilter").on("click", function () {
+        closeFilter();
+    });
+
+    function closeFilter() {
+        $("#modalFilter").modal("hide");
+    }
+
+    $("#tglFilter").daterangepicker(
+        {
+            maxDate: moment().format("DD/MM/YYYY"),
+            autoUpdateInput: false,
+            locale: {
+                format: "DD/MM/YYYY",
+            },
+        },
+        function (start, end, label) {
+            var choosen_val =
+                start.format("DD/MM/YYYY") + " - " + end.format("DD/MM/YYYY");
+            $("#tglFilterField").val(choosen_val);
+        }
+    );
+
+    function filterFunctions() {
+        $("#tagFilter")
+            .select2({
+                theme: "bootstrap4",
+                minimumInputLength: 3,
+                placeholder: "Pilih Tag",
+                allowClear: true,
+                ajax: {
+                    url: base_url + "/ajax/post/tags",
+                    dataType: "json",
+                    quietMillis: 100,
+                    data: function (params) {
+                        return {
+                            search: params.term,
+                        };
+                    },
+                    processResults: function (data, params) {
+                        return { results: data };
+                    },
+                },
+            })
+            .on("select2:select", function (res) {});
+    }
+
+    //reset
+    $("#btn-resetFilterReload").on("click", function () {
+        resetFilter();
+        refreshTable();
+    });
+    $("#resetFilter").on("click", function () {
+        resetFilter();
+    });
+
+    $("#btn-proFilter").on("click", function () {
+        proFilter();
+        closeFilter();
+    });
+
+    function proFilter() {
+        tablePosts.search("").draw();
+    }
+
+    function resetFilter() {
+        $("#formFilter")[0].reset();
+        $("#catFilter").val("").trigger("change");
+
+        $("#tagFilter").empty();
+
+        filterFunctions();
+
+        $("#tglFilterField").val("");
+        $("#tglFilter").data("daterangepicker").setStartDate(new Date());
+        $("#tglFilter").data("daterangepicker").setEndDate(new Date());
+    }
+    /**
+     * ./END FILTER
+     */
+
     tinymce.init({
         height: "1000",
         selector: "textarea#content", // Replace this CSS selector to match the placeholder element for TinyMCE
@@ -161,7 +256,7 @@ $(function () {
         },
     });
 
-    $("#categories").select2({
+    $("#categories,#catFilter").select2({
         theme: "bootstrap4",
         placeholder: "Select Category",
         allowClear: true,
@@ -170,7 +265,6 @@ $(function () {
     $("#tags")
         .select2({
             theme: "bootstrap4",
-            // placeholder: "Tags",
             minimumInputLength: 3,
             multiple: true,
             allowClear: true,

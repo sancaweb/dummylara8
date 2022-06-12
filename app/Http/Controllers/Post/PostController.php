@@ -11,6 +11,7 @@ use App\Models\Post\Category;
 use App\Helpers\ResponseFormat;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Encryption\DecryptException;
@@ -33,9 +34,13 @@ class PostController extends Controller
      */
     public function index()
     {
+        $categories = Category::orderBy('name', 'ASC')->get();
+        $penulis = User::role(['admin', 'super admin'])->get();
         $dataPage = [
             "pageTitle" => "Data Post",
             "page" => "post",
+            "categories" => $categories,
+            "penulis" => $penulis
         ];
 
         return view('post.index', $dataPage);
@@ -461,43 +466,42 @@ class PostController extends Controller
             $dataFilter['search'] = $search;
         }
 
-        // $tglFilter = $request->input('tglFilter');
+        $tglFilter = $request->input('tglFilter');
+        if (!empty($tglFilter)) {
+            $exp = explode("-", $tglFilter);
+            $startDateFilter = str_replace('/', '-', trim($exp[0]));
+            $endDateFilter = str_replace('/', '-', trim($exp[1]));
 
-        // if (!empty($tglFilter)) {
-        //     $exp = explode("-", $tglFilter);
-        //     $startDateFilter = str_replace('/', '-', trim($exp[0]));
-        //     $endDateFilter = str_replace('/', '-', trim($exp[1]));
-
-        //     $dataFilter['startDateFilter'] = Carbon::parse($startDateFilter)->format('Y-m-d');
-        //     $dataFilter['endDateFilter'] = Carbon::parse($endDateFilter)->format('Y-m-d');
-        // }
+            $dataFilter['startDateFilter'] = Carbon::parse($startDateFilter)->format('Y-m-d');
+            $dataFilter['endDateFilter'] = Carbon::parse($endDateFilter)->format('Y-m-d');
+        }
 
 
-        // $noSoFilter = $request->input('noSoFilter');
-        // if (!empty($noSoFilter)) {
+        //title or content
+        $titleContentFilter = $request->input('titleContentFilter');
+        if (!empty($titleContentFilter)) {
+            $dataFilter['titleContentFilter'] = $titleContentFilter;
+        }
 
-        //     $dataFilter['noSoFilter'] = $noSoFilter;
-        // }
+        $catFilter = $request->input('catFilter');
+        if (!empty($catFilter)) {
+            $dataFilter['catFilter'] = $catFilter;
+        }
 
-        // $noLoFilter = $request->input('noLoFilter');
-        // if (!empty($noLoFilter)) {
-        //     $dataFilter['noLoFilter'] = $noLoFilter;
-        // }
+        $tagFilter = $request->input('tagFilter');
+        if (!empty($tagFilter)) {
+            $dataFilter['tagFilter'] = $tagFilter;
+        }
 
-        // $bbmIdFilter = $request->input('bbmIdFilter');
-        // if (!empty($bbmIdFilter)) {
-        //     $dataFilter['bbmIdFilter'] = $bbmIdFilter;
-        // }
+        $userFilter = $request->input('userFilter');
+        if (!empty($userFilter)) {
+            $dataFilter['userFilter'] = $userFilter;
+        }
 
-        // $driverFilter = $request->input('driverFilter');
-        // if (!empty($driverFilter)) {
-        //     $dataFilter['driverFilter'] = $driverFilter;
-        // }
-
-        // $noPolFilter = $request->input('noPolFilter');
-        // if (!empty($noPolFilter)) {
-        //     $dataFilter['noPolFilter'] = $noPolFilter;
-        // }
+        $statusFilter = $request->input('statusFilter');
+        if (!empty($statusFilter)) {
+            $dataFilter['statusFilter'] = $statusFilter;
+        }
 
         //getData
         $kedatangan = Post::getData($dataFilter, $settings);
