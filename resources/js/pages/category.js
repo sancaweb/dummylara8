@@ -288,9 +288,11 @@ $(function () {
         var urlDelete = base_url + "/category/" + idCat + "/destroy";
         $.ajax({
             url: urlDelete,
-            type: "DELETE",
-            contentType: false,
-            processData: false,
+            type: "POST",
+            data: {
+                _method: "delete",
+            },
+            dataType: "JSON",
             success: function (data) {
                 Swal.fire({
                     icon: "success",

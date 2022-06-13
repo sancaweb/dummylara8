@@ -216,6 +216,13 @@
         <script src="{{ asset('js/pages/page.js?v=1.2') }}"></script>
     @endif
 
+    @if ($page == 'editPage')
+        <script src="{{ asset('vendor/laravel-filemanager/js/stand-alone-button.js') }}"></script>
+        <script src="{{ asset('js/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
+
+        <script src="{{ asset('js/pages/editPage.js?v=1.2') }}"></script>
+    @endif
+
     @if ($page == 'dashboard')
         <script src="{{ asset('v1/plugins/jquery-mousewheel/jquery.mousewheel.js') }}"></script>
         <script src="{{ asset('v1/plugins/raphael/raphael.min.js') }}"></script>

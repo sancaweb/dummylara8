@@ -4,7 +4,7 @@
         <div class="container-fluid">
 
 
-            <form id="formPost" action="{{ route('post.store') }}" method="post">
+            <form id="formPage" action="{{ route('page.store') }}" method="post">
                 <div class="row">
                     @csrf
                     <div class="col-8">
@@ -13,7 +13,7 @@
                                 <h3 class="card-title">{{ $pageTitle }}</h3>
                                 <div class="card-tools">
 
-                                    <a href="{{ route('post.create') }}" class="btn btn-sm btn-flat btn-success">
+                                    <a href="{{ route('page.create') }}" class="btn btn-sm btn-flat btn-success">
                                         <i class="fas fa-sync"></i> &nbsp; Reset Form
                                     </a>
 
@@ -24,7 +24,7 @@
 
                                 <div class="form-group">
                                     <label for="title">Title</label>
-                                    <input id="title" type="text" class="form-control" placeholder="Judul Post"
+                                    <input id="title" type="text" class="form-control" placeholder="Judul Page"
                                         name="title" required>
                                 </div>
                                 <!-- /.form-group -->
@@ -77,27 +77,6 @@
 
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="categories">Category</label>
-                                    <select class="form-control select2" name="category_id" id="categories">
-                                        <option value=""></option>
-                                        @foreach ($categories as $cat)
-                                            <option value="{{ $cat->id_category }}">{{ ucwords($cat->name) }}</option>
-                                        @endforeach
-
-
-                                    </select>
-                                </div>
-                                <!-- /.form-group -->
-
-
-                                <div class="form-group">
-                                    <label>Tags</label>
-                                    <select data-placeholder="Tags" class="form-control select2" name="tags[]" id="tags"
-                                        multiple>
-                                    </select>
-                                </div>
-                                <!-- /.form-group -->
 
                                 <div class="form-group">
                                     <label for="published_date">Published Date</label>
@@ -124,7 +103,7 @@
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer text-right">
-                                <a href="{{ route('post') }}" class="btn btn-secondary btn-flat btn-danger "><i
+                                <a href="{{ route('page') }}" class="btn btn-secondary btn-flat btn-danger "><i
                                         class="far fa-window-close"></i>&nbsp;Cancel</a>
                                 <button type="submit" class="btn btn-primary btn-flat"><i
                                         class="fas fa-save"></i>&nbsp;Save

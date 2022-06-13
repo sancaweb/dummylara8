@@ -342,9 +342,11 @@ $(function () {
                 var urlDelete = base_url + "/user/" + idUser + "/delete";
                 $.ajax({
                     url: urlDelete,
-                    type: "DELETE",
-                    contentType: false,
-                    processData: false,
+                    type: "POST",
+                    data: {
+                        _method: "delete",
+                    },
+                    dataType: "JSON",
                     success: function (data) {
                         Swal.fire({
                             icon: "success",

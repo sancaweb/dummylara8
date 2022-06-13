@@ -11,6 +11,7 @@ use App\Helpers\ResponseFormat;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Encryption\DecryptException;
 
 class PageController extends Controller
@@ -319,8 +320,8 @@ class PageController extends Controller
 
                 DB::commit();
                 return ResponseFormat::success([
-                    'message' => "Status Page Deleted",
-                ], "Status Page Deleted");
+                    'message' => "Page Deleted",
+                ], "Page Deleted");
             } catch (Exception $error) {
                 DB::rollBack();
                 return ResponseFormat::error([

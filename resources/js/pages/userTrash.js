@@ -1,11 +1,10 @@
 const { get } = require("jquery");
 
 $(function () {
-
     $.ajaxSetup({
         headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"').attr("content")
-        }
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"').attr("content"),
+        },
     });
 
     var columnsTable = [
@@ -20,9 +19,7 @@ $(function () {
 
     var tableUserTrash = $("#table-userTrash").DataTable({
         // "searching": false,
-        order: [
-            [0, 'DESC']
-        ],
+        order: [[0, "DESC"]],
         processing: true,
         serverSide: true,
         ajax: {
@@ -44,9 +41,12 @@ $(function () {
                     Swal.fire({
                         icon: "error",
                         title: " <br>Copy error dan hubungi Programmer!",
-                        html: '<div class="alert alert-danger text-left" role="alert">' +
-                            '<p>Error Message: <strong>' + error + '</strong></p>' +
-                            '</div>',
+                        html:
+                            '<div class="alert alert-danger text-left" role="alert">' +
+                            "<p>Error Message: <strong>" +
+                            error +
+                            "</strong></p>" +
+                            "</div>",
                         allowOutsideClick: false,
                         showConfirmButton: true,
                     }).then(function () {
@@ -59,26 +59,34 @@ $(function () {
                     Swal.fire({
                         icon: "error",
                         title: " <br>Copy error dan hubungi Programmer!",
-                        html: '<div class="alert alert-danger text-left" role="alert">' +
-                            '<p>Error Message: <strong>' + message + '</strong></p>' +
-                            '<p>File: ' + file + '</p>' +
-                            '<p>Line: ' + errorLine + '</p>' +
-                            '</div>',
+                        html:
+                            '<div class="alert alert-danger text-left" role="alert">' +
+                            "<p>Error Message: <strong>" +
+                            message +
+                            "</strong></p>" +
+                            "<p>File: " +
+                            file +
+                            "</p>" +
+                            "<p>Line: " +
+                            errorLine +
+                            "</p>" +
+                            "</div>",
                         allowOutsideClick: false,
                         showConfirmButton: true,
                     }).then(function () {
                         refreshTable();
                     });
                 }
-
-            }
+            },
         },
 
         columns: columnsTable,
-        columnDefs: [{
-            orderable: false,
-            targets: [0, 1, -1]
-        }]
+        columnDefs: [
+            {
+                orderable: false,
+                targets: [0, 1, -1],
+            },
+        ],
     });
 
     $("#table-userTrash_filter input").off();
@@ -94,26 +102,26 @@ $(function () {
         // tableUserTrash.ajax.reload();
     }
 
-    var btnReloadUser = document.getElementById('btn-userReload');
+    var btnReloadUser = document.getElementById("btn-userReload");
     if (btnReloadUser) {
-        btnReloadUser.addEventListener('click', function () {
+        btnReloadUser.addEventListener("click", function () {
             refreshTable();
         });
     }
 
     /** ./end datatable */
 
-    $('#table-userTrash').on("click", ".btn-restore", function () {
-        console.log('restoreaja');
+    $("#table-userTrash").on("click", ".btn-restore", function () {
+        console.log("restoreaja");
         Swal.fire({
-            title: 'Anda yakin?',
+            title: "Anda yakin?",
             text: "Anda yakin ingin Me-Restore data User ?",
-            icon: 'warning',
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!',
-            allowOutsideClick: false
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+            allowOutsideClick: false,
         }).then((result) => {
             if (result.value) {
                 Swal.fire({
@@ -121,57 +129,55 @@ $(function () {
                     imageHeight: 300,
                     showConfirmButton: false,
                     title: "Loading ...",
-                    allowOutsideClick: false
+                    allowOutsideClick: false,
                 });
 
-                var idUser = $(this).data('id');
-                var urlDelete = base_url + '/user/' + idUser + '/restore';
+                var idUser = $(this).data("id");
+                var urlDelete = base_url + "/user/" + idUser + "/restore";
                 $.ajax({
                     url: urlDelete,
                     type: "POST",
-                    contentType: false,
-                    processData: false,
+                    data: {
+                        _method: "delete",
+                    },
+                    dataType: "JSON",
                     success: function (data) {
                         Swal.fire({
                             icon: "success",
                             title: data.meta.message,
                             showConfirmButton: false,
                             timer: 2000,
-                            allowOutsideClick: false
+                            allowOutsideClick: false,
                         }).then(function () {
                             refreshTable();
                         });
-
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-
                         var error = jqXHR.responseJSON;
                         Swal.fire({
                             icon: "error",
                             title: error.message,
                             showConfirmButton: false,
                             timer: 2000,
-                            allowOutsideClick: false
+                            allowOutsideClick: false,
                         });
-
-                    }
+                    },
                 });
-
             }
         });
     });
     //./end restore
 
-    $('#table-userTrash').on("click", ".btn-destroy", function () {
+    $("#table-userTrash").on("click", ".btn-destroy", function () {
         Swal.fire({
-            title: 'Anda yakin?',
+            title: "Anda yakin?",
             text: "Anda yakin ingin menghapus Permanent ?",
-            icon: 'warning',
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!',
-            allowOutsideClick: false
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+            allowOutsideClick: false,
         }).then((result) => {
             if (result.value) {
                 Swal.fire({
@@ -179,45 +185,41 @@ $(function () {
                     imageHeight: 300,
                     showConfirmButton: false,
                     title: "Loading ...",
-                    allowOutsideClick: false
+                    allowOutsideClick: false,
                 });
 
-                var idUser = $(this).data('id');
-                var urlDelete = base_url + '/user/' + idUser + '/destroy';
+                var idUser = $(this).data("id");
+                var urlDelete = base_url + "/user/" + idUser + "/destroy";
                 $.ajax({
                     url: urlDelete,
-                    type: "DELETE",
-                    contentType: false,
-                    processData: false,
+                    type: "POST",
+                    data: {
+                        _method: "delete",
+                    },
+                    dataType: "JSON",
                     success: function (data) {
                         Swal.fire({
                             icon: "success",
                             title: data.meta.message,
                             showConfirmButton: false,
                             timer: 2000,
-                            allowOutsideClick: false
+                            allowOutsideClick: false,
                         }).then(function () {
                             refreshTable();
                         });
-
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-
                         var error = jqXHR.responseJSON;
                         Swal.fire({
                             icon: "error",
                             title: error.meta.message,
                             showConfirmButton: false,
                             timer: 2000,
-                            allowOutsideClick: false
+                            allowOutsideClick: false,
                         });
-
-                    }
+                    },
                 });
-
             }
         });
     });
-
-
 }); // ./end document

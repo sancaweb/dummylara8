@@ -15,7 +15,7 @@
                 <div class="modal-body">
                     @csrf
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-6">
                             <div class="form-group">
                                 <label>Tanggal</label>
                                 <div class="input-group " id="tglFilter" data-target-input="nearest">
@@ -29,35 +29,16 @@
                             </div>
                             <!-- /.form-group -->
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-6">
                             <div class="form-group">
                                 <label for="titleContentFilter">Title / Content</label>
                                 <input type="text" id="titleContentFilter" class="form-control" placeholder="Keyword">
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="catFilter">Category</label>
-                                <select id="catFilter" class="form-control">
-                                    <option value="">Pilih Tag</option>
-
-                                </select>
-                                <small class="form-text text-info"></small>
-                            </div>
-                        </div>
                     </div><!-- ./end row -->
 
                     <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="tagFilter">Tags</label>
-                                <select id="tagFilter" class="form-control select2">
-
-                                </select>
-                                <small class="form-text text-info"></small>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-6">
                             <div class="form-group">
                                 <label for="userFilter">Publisher</label>
                                 <select id="userFilter" class="form-control">
@@ -68,11 +49,11 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-6">
                             <div class="form-group">
                                 <label for="statusFilter">Status</label>
                                 <select id="statusFilter" class="form-control">
-                                    <option value="">Status Post</option>
+                                    <option value="">Status Page</option>
                                     <option value="published">Published</option>
                                     <option value="draft">Draft</option>
                                 </select>
